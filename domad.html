@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnetic Circles</title>
+    <style>
+        body {
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .circle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #ff5733;
+            border-radius: 50%;
+            cursor: grab;
+            transition: transform 0.1s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        const NUM_CIRCLES = 5;
+        const circles = [];
+
+        // Create circles dynamically
+        for (let i = 0; i < NUM_CIRCLES; i++) {
+            let circle = document.createElement("div");
+            circle.classList.add("circle");
+            document.body.appendChild(circle);
+
+            circle.style.left = Math.random() * window.innerWidth + "px";
+            circle.style.top = Math.random() * window.innerHeight + "px";
+
+            circles.push(circle);
+        }
+
+        document.addEventListener("mousemove", (event) => {
+            circles.forEach(circle => {
+                let rect = circle.getBoundingClientRect();
+                let dx = event.clientX - (rect.x + rect.width / 2);
+                let dy = event.clientY - (rect.y + rect.height / 2);
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 100) { // Magnetic effect
+                    circle.style.transform = `translate(${dx * 0.2}px, ${dy * 0.2}px)`;
+                } else {
+                    circle.style.transform = "";
+                }
+            });
+        });
+
+        circles.forEach(circle => {
+            let isDragging = false;
+
+            circle.addEventListener("mousedown", () => {
+                isDragging = true;
+            });
+
+            document.addEventListener("mousemove", (event) => {
+                if (!isDragging) return;
+                circle.style.left = event.clientX - circle.offsetWidth / 2 + "px";
+                circle.style.top = event.clientY - circle.offsetHeight / 2 + "px";
+            });
+
+            document.addEventListener("mouseup", () => {
+                isDragging = false;
+            });
+        });
+    </script>
+
+</body>
+</html>
